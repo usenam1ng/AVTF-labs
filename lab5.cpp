@@ -1,13 +1,20 @@
 #include <iostream>
+#include <vector>
+#include <memory>
+#include <algorithm>
+#include <unordered_set>
+#include <stdexcept>
 
 // Абстрактный класс персонажа
 class Character {
 public:
+    virtual ~Character() {}
     virtual void setName(const std::string& name) = 0;
     virtual void setElement(const std::string& element) = 0;
     virtual void setRole(const std::string& role) = 0;
     virtual void setAttributes(const std::string& attributes) = 0;
     virtual void displayInfo() = 0;
+    virtual std::string getName() = 0;
 };
 
 // Абстрактная фабрика персонажей
@@ -51,6 +58,10 @@ public:
         std::cout << "----------------------" << attributes << "\n";
         std::cout << "" << "\n";
     }
+
+    std::string getName() override {
+        return name;
+    }
 };
 
 // Конкретный класс персонажа - Воин
@@ -87,6 +98,10 @@ public:
         std::cout << "----------------------" << attributes << "\n";
         std::cout << "" << "\n";
     }
+
+    std::string getName() override {
+        return name;
+    }
 };
 
 // Конкретная фабрика создания персонажей стихии Земли
@@ -113,12 +128,35 @@ public:
     }
 };
 
-int main() {
-    std::cout << "Какой стихии персонажа вы хотите создать? (1 - Земли, 2 - Воды)\n";
-    int a;
-    std::cin >> a;
+class CharacterManager {
+private:
+    std::vector<Character*> characters;
+    std::unordered_set<std::string> characterNames;
 
-    if (a == 1){
+public:
+    bool isNameUnique(const std::string& name) {
+        return characterNames.find(name) == characterNames.end();
+    }
+
+    void addCharacter(Character* character) {
+        if (isNameUnique(character->getName())) {
+            characters.push_back(character);
+            characterNames.insert(character->getName());
+        } else {
+            throw std::invalid_argument("Character name must be unique!");
+        }
+    }
+};
+
+int main() {
+    CharacterManager manager;
+
+    while (true){
+        std::cout << "Какой стихии персонажа вы хотите создать? (1 - Земли, 2 - Воды, 0 - Выход)\n";
+        int a;
+        std::cin >> a;
+
+        if (a == 1){
         CharacterFactory* earthFactory = new EarthCharFactory();
         std::cout << "Какого класса персонажа вы хотите создать? (1 - Маг, 2 - Воин)\n";
         int b;
@@ -137,6 +175,7 @@ int main() {
             mage->setAttributes(sv);
             std::cout << "";
             mage->displayInfo();
+            manager.addCharacter(mage);
         } else if (b == 2){
             Character* warrior = earthFactory->createWarrior();
             std::cout << "Введите имя персонажа: \n";
@@ -151,6 +190,7 @@ int main() {
             warrior->setAttributes(sv);
             std::cout << "";
             warrior->displayInfo();
+            manager.addCharacter(warrior);
         }
     } else if (a == 2){
         CharacterFactory* waterFactory = new WaterCharFactory();
@@ -171,6 +211,7 @@ int main() {
             mage->setAttributes(sv);
             std::cout << "";
             mage->displayInfo();
+            manager.addCharacter(mage);
         } else if (b == 2){
             Character* warrior = waterFactory->createWarrior();
             std::cout << "Введите имя персонажа: \n";
@@ -185,9 +226,12 @@ int main() {
             warrior->setAttributes(sv);
             std::cout << "";
             warrior->displayInfo();
+            manager.addCharacter(warrior);
         }
+    } else if (a == 0){
+        break;
     }
     std::cout << std::endl;
-
+    }
     return 0;
 }
