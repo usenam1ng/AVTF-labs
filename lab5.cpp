@@ -175,7 +175,12 @@ int main() {
             mage->setAttributes(sv);
             std::cout << "";
             mage->displayInfo();
-            manager.addCharacter(mage);
+            try {
+                manager.addCharacter(mage);
+            } catch (const std::exception& e) {
+                // обработка ошибки
+                std::cout << "Имя должно быть уникальным" << e.what() << std::endl;
+            }
         } else if (b == 2){
             Character* warrior = earthFactory->createWarrior();
             std::cout << "Введите имя персонажа: \n";
@@ -190,7 +195,12 @@ int main() {
             warrior->setAttributes(sv);
             std::cout << "";
             warrior->displayInfo();
-            manager.addCharacter(warrior);
+            try {
+                manager.addCharacter(warrior);
+            } catch (const std::exception& e) {
+                // обработка ошибки
+                std::cout << "Имя должно быть уникальным" << e.what() << std::endl;
+            }
         }
     } else if (a == 2){
         CharacterFactory* waterFactory = new WaterCharFactory();
@@ -211,7 +221,12 @@ int main() {
             mage->setAttributes(sv);
             std::cout << "";
             mage->displayInfo();
-            manager.addCharacter(mage);
+            try {
+                manager.addCharacter(mage);
+            } catch (const std::exception& e) {
+                // обработка ошибки
+                std::cout << "Имя должно быть уникальным" << e.what() << std::endl;
+            }
         } else if (b == 2){
             Character* warrior = waterFactory->createWarrior();
             std::cout << "Введите имя персонажа: \n";
@@ -226,7 +241,13 @@ int main() {
             warrior->setAttributes(sv);
             std::cout << "";
             warrior->displayInfo();
-            manager.addCharacter(warrior);
+            try {
+                manager.addCharacter(warrior);
+            } catch (const std::exception& e) {
+                // обработка ошибки
+                std::cout << "Имя должно быть уникальным" << e.what() << std::endl;
+            }
+           
         }
     } else if (a == 0){
         break;
