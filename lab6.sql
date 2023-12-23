@@ -45,7 +45,9 @@ INSERT INTO products (name, price, description, category_id) VALUES
 -- Заполним таблицу клиентов
 INSERT INTO customers (first_name, last_name, email) VALUES
     ('John', 'Doe', 'john.doe@email.com'),
-    ('Alice', 'Smith', 'alice.smith@email.com');
+    ('Alice', 'Smith', 'alice.smith@email.com'),
+	('Ivan', 'Smith', 'iv.smith@email.com'),
+	('Igor', 'Jonson', 'aaaa.jsn@email.com');
 
 -- Заполним таблицу заказов
 INSERT INTO orders (order_date, status, customer_id) VALUES
@@ -68,11 +70,11 @@ UPDATE orders SET status = 'Delivered' WHERE id = 1;
 
 DELETE FROM customers WHERE email = 'alice.smith@email.com';
 
-SELECT * FROM products ORDER BY price DESC;
+SELECT * FROM products ORDER BY price;
 
 SELECT * FROM orders WHERE customer_id = 1;
 
-SELECT customer_id, COUNT(*) AS order_count
+SELECT customer_id, COUNT(id) AS order_count
 FROM orders
 GROUP BY customer_id;
 
@@ -85,6 +87,29 @@ INNER JOIN customers c ON o.customer_id = c.id;
 SELECT order_id, SUM(quantity * unit_price) AS total_cost
 FROM order_details
 GROUP BY order_id;
+
+
+
+-- regexp
+SELECT * FROM customers WHERE first_name ~* '^I.*';
+
+SELECT
+    c.first_name,
+    c.last_name,
+    o.order_date,
+    od.quantity,
+    p.name,
+    p.price
+FROM
+    customers AS c
+    INNER JOIN orders AS o ON c.id = o.customer_id
+    INNER JOIN order_details AS od ON o.id = od.order_id
+    INNER JOIN products AS p ON od.product_id = p.id
+WHERE
+    p.price > (
+        SELECT AVG(price)
+        FROM products
+    );
 
 
 drop table if exists customers cascade;
